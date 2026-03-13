@@ -23,7 +23,7 @@ class HideAIChatter(Star):
             if type(messages) is Comp.Plain:
                 text_to_image(messages.text)
                # print("processing: ", messages.text)
-                chain.append(Comp.fromURL('https://localhost/tmp/hider.png'))
+                chain.append(Comp.Image.fromURL('https://localhost/tmp/hider.png'))
         chain.append(Comp.Plain("!!!!!!!!!!!!!!!!"))
 
 
