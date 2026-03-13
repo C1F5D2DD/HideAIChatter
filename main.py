@@ -18,6 +18,7 @@ class HideAIChatter(Star):
 
     @filter.on_decorating_result()
     async def on_decorating_result(self, event: AstrMessageEvent):
+        ogger.info(f"running config:{config}")
         result = event.get_result()
         chain = result.chain
         print(chain)  # 打印消息链
@@ -39,7 +40,7 @@ def text_to_image(
     output_path: str = '/var/www/html/tmp/hider.png',
     max_width: int = 400,  # 图片最大宽度
     font_size: int = 20,   # 字体大小
-    font_path: str = "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+    font_path: str = "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
     bg_color: str = "white",  # 背景色（支持颜色名/十六进制）
     text_color: str = "black" # 文字色
 ):
