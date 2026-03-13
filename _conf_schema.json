@@ -1,0 +1,23 @@
+{
+  "font_config": {
+    "description": "字体配置",
+    "type": "object",
+    "items": {
+      "font_path": {
+        "description": "字体文件绝对路径",
+        "type": "string",
+        "hint": "示例：/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+        "default": "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc"
+      },
+      "enable_code_editor": {
+        "description": "是否启用字体路径代码编辑器模式",
+        "type": "bool",
+        "hint": "启用后可更方便编辑长路径",
+        "default": true,
+        "editor_mode": true,
+        "editor_language": "text",
+        "editor_theme": "vs-light"
+      }
+    }
+  }
+}

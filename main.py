@@ -11,10 +11,10 @@ import os
 
 
 class HideAIChatter(Star):
-    def __init__(self, context: Context):
+    def __init__(self, context: Context,config: AstrBotConfig):
         super().__init__(context)
-
-        #logger.info(f"running config:{config}")
+        self.config = config
+        logger.info(f"running config:{config}")
 
     @filter.on_decorating_result()
     async def on_decorating_result(self, event: AstrMessageEvent):
