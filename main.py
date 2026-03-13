@@ -35,7 +35,7 @@ class HideAIChatter(Star):
             else:
                 chain2.append(message)
         chain2.append(Comp.Plain("!!!!!!!!!!!!!!!!"))
-        await event.send(chain_result(chain2))
+       chain=chain2
 
 
 
