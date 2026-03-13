@@ -39,5 +39,12 @@
     "hint": "仅支持PNG/JPG格式",
     "options": ["png", "jpg"],
     "default": "png"
+  },
+  "no_think": {
+    "description": "是否强制阻止思考",
+    "type": "bool",
+
+    "options": [true, false],
+    "default": true
   }
 }
