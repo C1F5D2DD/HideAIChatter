@@ -59,13 +59,15 @@
     "editor_language": "HTML"
   },
   "Jinja2 ": {
-    "description": "Jinja2 的渲染数据。详见https://docs.astrbot.app/dev/star/guides/html-to-pic.html",
-    "type": "dict",
-    "editor_mode": true
+    "description": "Jinja2 的渲染数据。详见https://docs.astrbot.app/dev/star/guides/html-to-pic.html \n ！注意！此处的内容会被eval()执行，请务必确认内容安全！！",
+    "type": "string",
+    "editor_mode": true,
+    "default": ""
   },
   "options": {
-    "description": "渲染设置。详见https://docs.astrbot.app/dev/star/guides/html-to-pic.html",
-    "type": "dict",
-    "editor_mode": true
+    "description": "渲染设置。详见https://docs.astrbot.app/dev/star/guides/html-to-pic.html \n！注意！此处的内容会被eval()执行，请务必确认内容安全！！",
+    "type": "string",
+    "editor_mode": true,
+    "default":""
   }
 }

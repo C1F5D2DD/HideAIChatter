@@ -27,7 +27,7 @@ class HideAIChatter(Star):
         for message in chain:
             if type(message) is Comp.Plain:
                 if self.config.use_official_t2i:
-                    url = await self.html_render(self.config.TMPL, self.config.Jinja2, options=self.config.options)
+                    url = await self.html_render(self.config.TMPL, eval(self.config.Jinja2), options=eval(self.config.options))
                     hain2.append(Comp.Image.fromURL(url))
                 else:
                     text_to_image(text=message.text,
