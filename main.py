@@ -28,7 +28,7 @@ class HideAIChatter(Star):
 
 
 
-def text_to_img(
+def text_to_image(
     text: str,
     output_path: str = '/var/www/html/tmp/hider.png',
     max_width: int = 400,  # 图片最大宽度
