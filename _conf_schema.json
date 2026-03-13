@@ -48,8 +48,7 @@
   "use_official_t2i": {
     "description": "是否使用官方api的text_to_image。这会导致以上的所有设置无效，并启用下列设置。",
     "type": "bool",
-    "options": ["true", "false"],
-    "default": true
+    "default": false
   },
   "TMPL": {
     "description": "HTML模板。详见https://docs.astrbot.app/dev/star/guides/html-to-pic.html",
@@ -62,12 +61,12 @@
     "description": "Jinja2 的渲染数据。详见https://docs.astrbot.app/dev/star/guides/html-to-pic.html \n ！注意！此处的内容会被eval()执行，请务必确认内容安全！！",
     "type": "string",
     "editor_mode": true,
-    "default": ""
+    "default": "{}"
   },
   "options": {
     "description": "渲染设置。详见https://docs.astrbot.app/dev/star/guides/html-to-pic.html \n！注意！此处的内容会被eval()执行，请务必确认内容安全！！",
     "type": "string",
     "editor_mode": true,
-    "default":""
+    "default":"{}"
   }
 }
