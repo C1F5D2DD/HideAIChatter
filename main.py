@@ -67,13 +67,14 @@ def text_to_image(
     :param bg_color: 背景色（如 "white"、"#f0f0f0"）
     :param text_color: 文字色（如 "black"、"#333333"）
     """
-    os.remove(output_path)
+
 
     # 1. 加载字体（启用多字符集排版引擎）
     try:
         font = ImageFont.truetype(
             font_path, font_size
         )
+        os.remove(output_path)
     except Exception as e:
         print(f"字体加载失败，使用默认字体：{e}")
         font = ImageFont.load_default(size=font_size)
