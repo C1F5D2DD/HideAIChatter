@@ -80,7 +80,7 @@ def text_to_image(
 
     # 2. 自动换行（按空格拆分，适配宽度）
     lines=[]
-    chars = list(txt)
+    chars = list(text)
     current_line = ""
     line_width = 0
     for char in chars:
