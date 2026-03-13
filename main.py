@@ -3,6 +3,7 @@ from astrbot.api.star import Context, Star, register
 from astrbot.api import logger # 使用 astrbot 提供的 logger 接口
 import astrbot.api.message_components as Comp
 from astrbot.api import AstrBotConfig
+from astrbot.api.provider import ProviderRequest
 
 from PIL import Image, ImageDraw, ImageFont
 import os
@@ -37,6 +38,10 @@ class HideAIChatter(Star):
         chain2.append(Comp.Plain("!!!!!!!!!!!!!!!!"))
         result.chain=chain2.copy()
 
+    @filter.on_llm_request()
+    async def my_custom_hook_1(self, event: AstrMessageEvent, req: ProviderRequest):  # 请注意有三个参数
+        print(req)  # 打印请求的文本
+        req.system_prompt += "/no_think"
 
 
 def text_to_image(
