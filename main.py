@@ -40,7 +40,7 @@ def text_to_image(
     output_path: str = '/var/www/html/tmp/hider.png',
     max_width: int = 400,  # 图片最大宽度
     font_size: int = 20,   # 字体大小
-    font_path: str = "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
+    font_path: str = "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
     bg_color: str = "white",  # 背景色（支持颜色名/十六进制）
     text_color: str = "black" # 文字色
 ):
@@ -57,7 +57,7 @@ def text_to_image(
     # 1. 加载字体（启用多字符集排版引擎）
     try:
         font = ImageFont.truetype(
-            font_path, font_size, layout_engine=ImageFont.LAYOUT_RAQM
+            font_path, font_size
         )
     except Exception as e:
         print(f"字体加载失败，使用默认字体：{e}")
