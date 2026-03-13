@@ -28,91 +28,69 @@ class HideAIChatter(Star):
 
 
 
-def text_to_image(
-        text: str,
-        output_path: str = "/var/www/html/tmp/hider.png",
-        font_path: str ='/usr/share/fonts/truetype/wqy/wqy-microhei.ttc',
-        font_size: int = 24,
-        bg_color: tuple = (255, 255, 255),  # 白色背景 (R, G, B)
-        text_color: tuple = (0, 0, 0),  # 黑色文字
-        padding: int = 30,  # 文字与画布边缘的间距
-        line_spacing: int = 10  # 行间距
+def text_to_img(
+    text: str,
+    output_path: str = '/var/www/html/tmp/hider.png',
+    max_width: int = 400,  # 图片最大宽度
+    font_size: int = 20,   # 字体大小
+    font_path: str = "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+    bg_color: str = "white",  # 背景色（支持颜色名/十六进制）
+    text_color: str = "black" # 文字色
 ):
     """
-    将文字转换为图片（基于Pillow库）
-    :param text: 要转换的文字（支持\n换行）
+    文字转图片（限制宽度+自动换行+兼容中文/英文/Emoji）
+    :param text: 要转换的文字（支持中文、英文、Emoji）
     :param output_path: 输出图片路径
-    :param font_path: 字体文件路径（None则使用默认字体）
+    :param max_width: 图片最大宽度（像素）
     :param font_size: 字体大小
-    :param bg_color: 背景色，RGB元组（如白色(255,255,255)）
-    :param text_color: 文字色，RGB元组（如黑色(0,0,0)）
-    :param padding: 内边距（像素）
-    :param line_spacing: 行间距（像素）
+    :param font_path: 字体路径（Linux Noto CJK 字体）
+    :param bg_color: 背景色（如 "white"、"#f0f0f0"）
+    :param text_color: 文字色（如 "black"、"#333333"）
     """
-    # 1. 设置字体（优先使用指定字体，无则用默认）
+    # 1. 加载字体（启用多字符集排版引擎）
     try:
-        if font_path and os.path.exists(font_path):
-            font = ImageFont.truetype(font_path, font_size)
-        else:
-            # 使用PIL默认字体（兼容Windows/macOS/Linux）
-            font = ImageFont.load_default(size=font_size)
-    except Exception:
-        # 兜底：强制使用默认字体（避免字体加载失败）
+        font = ImageFont.truetype(
+            font_path, font_size, layout_engine=ImageFont.LAYOUT_RAQM
+        )
+    except Exception as e:
+        print(f"字体加载失败，使用默认字体：{e}")
         font = ImageFont.load_default(size=font_size)
 
-    # 2. 拆分文字为多行，计算文字总尺寸
-    lines = text.split("\n")
-    draw = ImageDraw.Draw(Image.new("RGB", (1, 1)))  # 临时画布用于计算文字尺寸
+    # 2. 自动换行（按空格拆分，适配宽度）
+    def wrap_text(txt, fnt, max_w):
+        lines = []
+        if not txt:
+            return lines
+        # 拆分字符（兼容无空格的长文本）
+        chars = list(txt)
+        current_line = ""
+        for char in chars:
+            test_line = current_line + char
+            # 获取文字宽度
+            line_width = font.getbbox(test_line)[2]
+            if line_width <= max_w - 40:  # 留20px左右内边距
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = char
+        if current_line:
+            lines.append(current_line)
+        return lines
 
-    # 计算每行文字的宽度和高度
-    line_sizes = []
-    max_line_width = 0
-    total_text_height = 0
+    lines = wrap_text(text, font, max_width)
+
+    # 3. 计算图片高度（行高=字号+8px间距）
+    line_height = font_size + 8
+    total_height = line_height * len(lines) + 40  # 上下各20px内边距
+
+    # 4. 创建图片并绘制文字
+    img = Image.new("RGB", (max_width, total_height), bg_color)
+    draw = ImageDraw.Draw(img)
+    y = 20  # 文字起始y坐标（顶部内边距）
     for line in lines:
-        if line.strip() == "":  # 空行
-            line_width, line_height = 0, font_size
-        else:
-            # 获取文字的边界框尺寸（(left, top, right, bottom)）
-            bbox = draw.textbbox((0, 0), line, font=font)
-            line_width = bbox[2] - bbox[0]
-            line_height = bbox[3] - bbox[1]
-
-        line_sizes.append((line_width, line_height))
-        max_line_width = max(max_line_width, line_width)
-        total_text_height += line_height + line_spacing
-
-    # 减去最后一行多余的行间距
-    total_text_height -= line_spacing
-
-    # 3. 创建最终画布（文字尺寸 + 左右/上下内边距）
-    canvas_width = max_line_width + 2 * padding
-    canvas_height = total_text_height + 2 * padding
-    image = Image.new("RGB", (canvas_width, canvas_height), bg_color)
-    draw = ImageDraw.Draw(image)
-
-    # 4. 逐行绘制文字
-    current_y = padding  # 文字起始Y坐标
-    for idx, line in enumerate(lines):
-        if line.strip() == "":
-            current_y += font_size + line_spacing
-            continue
-
-        line_width, line_height = line_sizes[idx]
-        # 文字水平居中（也可改为左对齐：x=padding）
-        current_x = (canvas_width - line_width) // 2
-        # 绘制文字
-        draw.text(
-            (current_x, current_y),
-            line,
-            fill=text_color,
-            font=font,
-            anchor="lt"  # 锚点：左上对齐（避免文字偏移）
-        )
-        current_y += line_height + line_spacing
+        draw.text((20, y), line, fill=text_color, font=font)
+        y += line_height
 
     # 5. 保存图片
-    image.save(output_path)
-    print(f"图片已保存至：{os.path.abspath(output_path)}")
-
-
-# ------------------- 测试用例 -------------------
+    img.save(output_path)
+    print(f"图片已生成：{output_path}（宽度：{max_width}px）")
