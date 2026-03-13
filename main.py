@@ -20,7 +20,7 @@ class HideAIChatter(Star):
         chain = result.chain
         print(chain)  # 打印消息链
         for messages in chain:
-            if type(messages) is ComponentType.Plain:
+            if type(messages) is Comp.Plain:
                 text_to_image(messages.text)
                 print("processing: ", messages.text)
                 messages=Comp.Image.fromURL('https://127.0.0.1/tmp/hider.png')
