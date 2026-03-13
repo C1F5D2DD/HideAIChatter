@@ -83,6 +83,7 @@ def text_to_image(
 
     # 2. 自动换行（按空格拆分，适配宽度）
     lines=[]
+    text=text.replace("\n", "").replace("\r", "")
     chars = list(text)
     current_line = ""
     line_width = 0
