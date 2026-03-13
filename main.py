@@ -5,7 +5,7 @@ from astrbot.api import logger # 使用 astrbot 提供的 logger 接口
 
 print=logger.info
 
-class HideAIChatter(star):
+class HideAIChatter(Star):
     def __init__(self, context: Context):
         super().__init__(context)
 
