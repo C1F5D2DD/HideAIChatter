@@ -1,23 +1,43 @@
 {
-  "font_config": {
-    "description": "字体配置",
-    "type": "object",
-    "items": {
-      "font_path": {
-        "description": "字体文件绝对路径",
-        "type": "string",
-        "hint": "示例：/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
-        "default": "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc"
-      },
-      "enable_code_editor": {
-        "description": "是否启用字体路径代码编辑器模式",
-        "type": "bool",
-        "hint": "启用后可更方便编辑长路径",
-        "default": true,
-        "editor_mode": true,
-        "editor_language": "text",
-        "editor_theme": "vs-light"
-      }
-    }
+  "max_width": {
+    "description": "图片最大宽度（像素）",
+    "type": "int",
+    "hint": "建议范围：300-1000，宽度过小将导致文字频繁换行",
+    "default": 500
+  },
+  "font_size": {
+    "description": "文字字号（像素）",
+    "type": "int",
+    "hint": "建议范围：16-48，过大会超出图片宽度",
+    "default": 36
+  },
+  "bg_color": {
+    "description": "图片背景色",
+    "type": "string",
+    "hint": "支持颜色名（如white）或十六进制（如#f8f8f8）",
+    "default": "white"
+  },
+  "text_color": {
+    "description": "文字颜色",
+    "type": "string",
+    "hint": "支持颜色名（如black）或十六进制（如#333333）",
+    "default": "black"
+  },
+  "font_path": {
+    "description": "字体文件绝对路径",
+    "type": "string",
+    "default": "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc"
+  },
+  "output_path": {
+    "description": "图片输出路径,放在可以用Image.fromURL得到的路径下",
+    "type": "string",
+    "default": "/var/www/html/tmp/hider.png"
+  },
+  "image_format": {
+    "description": "图片格式",
+    "type": "string",
+    "hint": "仅支持PNG/JPG格式",
+    "options": ["png", "jpg"],
+    "default": "png"
   }
 }
