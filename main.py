@@ -26,17 +26,17 @@ class HideAIChatter(Star):
         chain2=[]
         for message in chain:
             if type(message) is Comp.Plain:
-                '''
+
                 text_to_image(text=message.text,
                               output_path=self.config.output_path,
                               font_path=self.config.font_path,
                               max_width=self.config.max_width,
                               font_size=self.config.font_size)
-                              '''
+
                # print("processing: ", messages.text)
-               # chain2.append(Comp.Image.fromURL('https://localhost/tmp/hider.png'))
-                url = await self.text_to_image(message.text)
-                chain2.append(Comp.Image.fromURL(url=url))
+                chain2.append(Comp.Image.fromURL('https://localhost/tmp/hider.png'))
+                #url = await self.text_to_image(message.text)
+                #chain2.append(Comp.Image.fromURL(url=url))
             else:
                 chain2.append(message)
         #chain2.append(Comp.Plain("!!!!!!!!!!!!!!!!"))
@@ -67,6 +67,8 @@ def text_to_image(
     :param bg_color: 背景色（如 "white"、"#f0f0f0"）
     :param text_color: 文字色（如 "black"、"#333333"）
     """
+    os.remove(output_path)
+
     # 1. 加载字体（启用多字符集排版引擎）
     try:
         font = ImageFont.truetype(
@@ -77,30 +79,24 @@ def text_to_image(
         font = ImageFont.load_default(size=font_size)
 
     # 2. 自动换行（按空格拆分，适配宽度）
-    def wrap_text(txt, fnt, max_w):
-        lines = []
-        if not txt:
-            return lines
-        # 拆分字符（兼容无空格的长文本）
-        chars = list(txt)
-        current_line = ""
-        for char in chars:
-            test_line = current_line + char
-            # 获取文字宽度
-            line_width = font.getbbox(test_line)[2]
-            if line_width <= max_w - 40:  # 留20px左右内边距
-                current_line = test_line
-            else:
-                lines.append(current_line)
-                current_line = char
-        if current_line:
+    lines=[]
+    chars = list(txt)
+    current_line = ""
+    line_width = 0
+    for char in chars:
+        # 获取文字宽度
+        char_width = font.getlength(char)
+        line_width+=char_width
+        if (line_width <= max_width - 40) and (char != chars[-1]):  # 留20px左右内边距
+            current_line =current_line + char
+        else:
+            if char != chars[-1]:
+                current_line = current_line + char
             lines.append(current_line)
-        return lines
-
-    lines = wrap_text(text, font, max_width)
-
+            current_line = ''
+            line_width = 0
     # 3. 计算图片高度（行高=字号+8px间距）
-    line_height = font_size + 8
+    line_height = int(1.4*font_size)
     total_height = line_height * len(lines) + 40  # 上下各20px内边距
 
     # 4. 创建图片并绘制文字
