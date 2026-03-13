@@ -26,24 +26,27 @@ class HideAIChatter(Star):
         chain2=[]
         for message in chain:
             if type(message) is Comp.Plain:
+                if self.config.use_official_t2i:
+                    url = await self.html_render(self.config.TMPL, self.config.Jinja2, options=self.config.options)
+                    hain2.append(Comp.Image.fromURL(url))
+                else:
+                    text_to_image(text=message.text,
+                                output_path=self.config.output_path,
+                                font_path=self.config.font_path,
+                                 max_width=self.config.max_width,
+                                font_size=self.config.font_size)
 
-                text_to_image(text=message.text,
-                              output_path=self.config.output_path,
-                              font_path=self.config.font_path,
-                              max_width=self.config.max_width,
-                              font_size=self.config.font_size)
-
-               # print("processing: ", messages.text)
-                chain2.append(Comp.Image.fromURL('https://localhost/tmp/hider.png'))
-                #url = await self.text_to_image(message.text)
-                #chain2.append(Comp.Image.fromURL(url=url))
+                     # print("processing: ", messages.text)
+                    chain2.append(Comp.Image.fromURL('https://localhost/tmp/hider.png'))
+                    #url = await self.text_to_image(message.text)
+                    #chain2.append(Comp.Image.fromURL(url=url))
             else:
                 chain2.append(message)
         #chain2.append(Comp.Plain("!!!!!!!!!!!!!!!!"))
         result.chain=chain2.copy()
 
     @filter.on_llm_request()
-    async def my_custom_hook_1(self, event: AstrMessageEvent, req: ProviderRequest):  # 请注意有三个参数
+    async def no_think(self, event: AstrMessageEvent, req: ProviderRequest):  # 请注意有三个参数
         print(req)  # 打印请求的文本
         req.system_prompt += "/no_think" if self.config.no_think else ""
 

@@ -33,18 +33,39 @@
     "type": "string",
     "default": "/var/www/html/tmp/hider.png"
   },
-  "image_format": {
-    "description": "图片格式",
+  "url": {
+    "description": "Image.fromURL的参数",
     "type": "string",
-    "hint": "仅支持PNG/JPG格式",
-    "options": ["png", "jpg"],
-    "default": "png"
+    "default": "https://localhost/tmp/hider.png"
   },
   "no_think": {
     "description": "是否强制阻止思考",
     "type": "bool",
 
-    "options": [true, false],
+    "options": ["true", "false"],
     "default": true
+  },
+  "use_official_t2i": {
+    "description": "是否使用官方api的text_to_image。这会导致以上的所有设置无效，并启用下列设置。",
+    "type": "bool",
+    "options": ["true", "false"],
+    "default": true
+  },
+  "TMPL": {
+    "description": "HTML模板。详见https://docs.astrbot.app/dev/star/guides/html-to-pic.html",
+    "type": "string",
+    "editor_mode": true,
+    "default":"",
+    "editor_language": "HTML"
+  },
+  "Jinja2 ": {
+    "description": "Jinja2 的渲染数据。详见https://docs.astrbot.app/dev/star/guides/html-to-pic.html",
+    "type": "dict",
+    "editor_mode": true
+  },
+  "options": {
+    "description": "渲染设置。详见https://docs.astrbot.app/dev/star/guides/html-to-pic.html",
+    "type": "dict",
+    "editor_mode": true
   }
 }
