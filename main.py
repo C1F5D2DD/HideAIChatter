@@ -11,9 +11,9 @@ import os
 
 
 class HideAIChatter(Star):
-    def __init__(self, context: Context,config: AstrBotConfig):
+    def __init__(self, context: Context):
         super().__init__(context)
-        self.config = config
+
         #logger.info(f"running config:{config}")
 
     @filter.on_decorating_result()
