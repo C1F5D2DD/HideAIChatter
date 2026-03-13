@@ -24,7 +24,7 @@ class HideAIChatter(Star):
         print(chain)  # 打印消息链
         for message in chain:
             if type(message) is Comp.Plain:
-                text_to_image(text=messages.text,
+                text_to_image(text=message.text,
                               output_path=self.config.output_path,
                               font_path=self.config.font_path,
                               max_width=self.config.max_width,
