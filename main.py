@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 
 
-print=logger.info
+
 
 class HideAIChatter(Star):
     def __init__(self, context: Context):
@@ -22,7 +22,7 @@ class HideAIChatter(Star):
         for messages in chain:
             if type(messages) is Comp.Plain:
                 text_to_image(messages.text)
-                print("processing: ", messages.text)
+               # print("processing: ", messages.text)
                 chain.append(Image.fromURL('https://localhost/tmp/hider.png'))
         chain.append(Comp.Plain("!!!!!!!!!!!!!!!!"))
 
