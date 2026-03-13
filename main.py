@@ -30,7 +30,7 @@ class HideAIChatter(Star):
                               max_width=self.config.max_width,
                               font_size=self.config.font_size)
                # print("processing: ", messages.text)
-                chain.append(Comp.Image.fromURL('https://localhost/tmp/hider.png'))
+               messages=Image.fromURL('https://localhost/tmp/hider.png')
         chain.append(Comp.Plain("!!!!!!!!!!!!!!!!"))
 
 
