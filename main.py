@@ -96,10 +96,11 @@ def text_to_image(
             if char != chars[-1]:
                 current_line = current_line + char
             lines.append(current_line)
+            logger.info(current_line)
             current_line = ''
             line_width = 0
     # 3. 计算图片高度（行高=字号+8px间距）
-    line_height = int(1.4*font_size)
+    line_height = int(1.4*font_size)+1
     total_height = line_height * len(lines) + 40  # 上下各20px内边距
 
     # 4. 创建图片并绘制文字
