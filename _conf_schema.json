@@ -39,14 +39,12 @@
     "default": "https://localhost/tmp/hider.png"
   },
   "no_think": {
-    "description": "是否强制阻止思考",
+    "description": "强制阻止输出思考链",
     "type": "bool",
-
-    "options": ["true", "false"],
     "default": true
   },
   "use_official_t2i": {
-    "description": "是否使用官方api的text_to_image。这会导致以上的所有设置无效，并启用下列设置。",
+    "description": "使用官方api的text_to_image。这会导致以上的所有设置无效，并启用下列设置。",
     "type": "bool",
     "default": false
   },
