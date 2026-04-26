@@ -37,7 +37,8 @@ class HideAIChatter(Star):
                                 font_size=self.config.font_size)
 
                      # print("processing: ", messages.text)
-                    chain2.append(Comp.Image.fromURL('https://localhost/tmp/hider.png'))
+
+                    chain2.append(Comp.Image.fromFileSystem(self.config.output_path))
                     #url = await self.text_to_image(message.text)
                     #chain2.append(Comp.Image.fromURL(url=url))
             else:
