@@ -54,64 +54,76 @@ class HideAIChatter(Star):
 def text_to_image(
     text: str,
     output_path: str = '/var/www/html/tmp/hider.png',
-    max_width: int = 400,  # 图片最大宽度
-    font_size: int = 20,   # 字体大小
+    max_width: int = 400,
+    font_size: int = 20,
     font_path: str = "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
-    bg_color: str = "white",  # 背景色（支持颜色名/十六进制）
-    text_color: str = "black" # 文字色
+    bg_color: str = "white",
+    text_color: str = "black"
 ):
     """
-    文字转图片（限制宽度+自动换行+兼容中文/英文/Emoji）
-    :param text: 要转换的文字（支持中文、英文、Emoji）
-    :param output_path: 输出图片路径
-    :param max_width: 图片最大宽度（像素）
-    :param font_size: 字体大小
-    :param font_path: 字体路径（Linux Noto CJK 字体）
-    :param bg_color: 背景色（如 "white"、"#f0f0f0"）
-    :param text_color: 文字色（如 "black"、"#333333"）
+    文字转图片（保留原始空格与换行，自动换行适应宽度）
+
+    行为：
+    - 原始 \\n 视为强制换行（手动换行）
+    - 每个自然段（原始换行分隔）内部，按像素宽度自动换行
+    - 保留文本中所有空格（包括连续空格）
+    - 左右各留 20px 内边距
     """
-
-
-    # 1. 加载字体（启用多字符集排版引擎）
+    # 1. 加载字体
     try:
-        font = ImageFont.truetype(
-            font_path, font_size
-        )
+        font = ImageFont.truetype(font_path, font_size)
     except Exception as e:
-        print(f"字体加载失败，使用默认字体：{e}")
+        logger.warning(f"字体加载失败，使用默认字体：{e}")
         font = ImageFont.load_default(size=font_size)
 
-    # 2. 自动换行（按空格拆分，适配宽度）
-    lines=[]
-    text=text.replace("\n", "").replace("\r", "")
-    chars = list(text)
-    current_line = ""
-    line_width = 0
-    for char in chars:
-        # 获取文字宽度
-        char_width = font.getlength(char)
-        line_width+=char_width
-        if (line_width <= max_width - 40) and (char != chars[-1]):  # 留20px左右内边距
-            current_line =current_line + char
-        else:
-            if char != chars[-1]:
-                current_line = current_line + char
-            lines.append(current_line)
-            logger.info(current_line)
-            current_line = ''
-            line_width = 0
-    # 3. 计算图片高度（行高=字号+8px间距）
-    line_height = int(1.4*font_size)+1
-    total_height = line_height * len(lines) + 40  # 上下各20px内边距
+    # 2. 预留宽度（左右各 20px 边距）
+    usable_width = max_width - 40
 
-    # 4. 创建图片并绘制文字
+    # 3. 按原始换行分割为段落（保留所有原始换行逻辑）
+    paragraphs = text.split('\n')
+
+    lines = []               # 最终要绘制的每一行（包括空行）
+    line_height = int(1.4 * font_size) + 1   # 行高
+
+    for para in paragraphs:
+        # 保留原始空格，不替换
+        # 空段落表示一个空行（例如连续 \\n\\n）
+        if para == '':
+            lines.append('')
+            continue
+
+        # 对当前段落进行字符级自动换行
+        current_line = ''
+        current_width = 0.0
+        for char in para:
+            char_width = font.getlength(char)
+            # 如果加入这个字符后宽度超出可用宽度，则把当前行存起来，字符放到下一行
+            if current_width + char_width > usable_width:
+                lines.append(current_line)
+                current_line = char
+                current_width = char_width
+            else:
+                current_line += char
+                current_width += char_width
+        # 处理段落最后一行
+        if current_line:
+            lines.append(current_line)
+
+    # 4. 计算图片总高度
+    #     顶部 20px 内边距 + 行数*行高 + 底部 20px 内边距
+    total_height = 20 + len(lines) * line_height + 20
+
+    # 5. 创建图片并绘制
     img = Image.new("RGB", (max_width, total_height), bg_color)
     draw = ImageDraw.Draw(img)
-    y = 20  # 文字起始y坐标（顶部内边距）
+
+    y = 20   # 顶部内边距
     for line in lines:
-        draw.text((20, y), line, fill=text_color, font=font)
+        # 空行只增加 y 偏移，不绘制文字
+        if line != '':
+            draw.text((20, y), line, fill=text_color, font=font)
         y += line_height
 
-    # 5. 保存图片
+    # 6. 保存
     img.save(output_path)
-    print(f"图片已生成：{output_path}（宽度：{max_width}px）")
+    logger.info(f"图片已生成：{output_path}（宽度：{max_width}px）")
