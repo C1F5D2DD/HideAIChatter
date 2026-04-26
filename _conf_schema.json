@@ -29,14 +29,9 @@
     "default": "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc"
   },
   "output_path": {
-    "description": "图片输出路径,放在可以用Image.fromURL得到的路径下",
+    "description": "图片输出路径,放在可以用Image.fromFIleSystem得到的路径下",
     "type": "string",
     "default": "/var/www/html/tmp/hider.png"
-  },
-  "url": {
-    "description": "Image.fromURL的参数",
-    "type": "string",
-    "default": "https://localhost/tmp/hider.png"
   },
   "no_think": {
     "description": "强制阻止输出思考链",
