@@ -5,8 +5,9 @@ import astrbot.api.message_components as Comp
 from astrbot.api import AstrBotConfig
 from astrbot.api.provider import ProviderRequest
 
-from PIL import Image, ImageDraw, ImageFont
 import os
+from PIL import Image, ImageDraw, ImageFont
+from pilmoji import Pilmoji
 
 
 
@@ -57,20 +58,21 @@ def text_to_image(
     output_path: str = '/var/www/html/tmp/hider.png',
     max_width: int = 400,
     font_size: int = 20,
-    font_path: str = "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
+    font_path: str = "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc", # 仅用于渲染普通文字
     bg_color: str = "white",
     text_color: str = "black"
 ):
     """
-    文字转图片（保留原始空格与换行，自动换行适应宽度）
+    文字转图片（保留原始空格与换行，自动换行适应宽度，支持彩色Emoji）
 
     行为：
     - 原始 \\n 视为强制换行（手动换行）
     - 每个自然段（原始换行分隔）内部，按像素宽度自动换行
     - 保留文本中所有空格（包括连续空格）
     - 左右各留 20px 内边距
+    - 使用 pilmoji 自动调用系统Noto Color Emoji字体渲染彩色Emoji
     """
-    # 1. 加载字体
+    # 1. 加载普通文字字体（pilmoji 会处理 emoji，无需单独加载）
     try:
         font = ImageFont.truetype(font_path, font_size)
     except Exception as e:
@@ -87,7 +89,6 @@ def text_to_image(
     line_height = int(1.4 * font_size) + 1   # 行高
 
     for para in paragraphs:
-        # 保留原始空格，不替换
         # 空段落表示一个空行（例如连续 \\n\\n）
         if para == '':
             lines.append('')
@@ -98,7 +99,6 @@ def text_to_image(
         current_width = 0.0
         for char in para:
             char_width = font.getlength(char)
-            # 如果加入这个字符后宽度超出可用宽度，则把当前行存起来，字符放到下一行
             if current_width + char_width > usable_width:
                 lines.append(current_line)
                 current_line = char
@@ -111,20 +111,19 @@ def text_to_image(
             lines.append(current_line)
 
     # 4. 计算图片总高度
-    #     顶部 20px 内边距 + 行数*行高 + 底部 20px 内边距
     total_height = 20 + len(lines) * line_height + 20
 
-    # 5. 创建图片并绘制
+    # 5. 创建图片并绘制（使用 pilmoji 支持彩色 emoji）
     img = Image.new("RGB", (max_width, total_height), bg_color)
-    draw = ImageDraw.Draw(img)
 
-    y = 20   # 顶部内边距
-    for line in lines:
-        # 空行只增加 y 偏移，不绘制文字
-        if line != '':
-            draw.text((20, y), line, fill=text_color, font=font)
-        y += line_height
+    with Pilmoji(img) as pilmoji:
+        y = 20
+        for line in lines:
+            if line != '':
+                # pilmoji.text 会自动处理文本中的emoji，而其他文字仍使用'font'参数指定的字体
+                pilmoji.text((20, y), line, fill=text_color, font=font)
+            y += line_height
 
-    # 6. 保存
+    # 6. 保存图片
     img.save(output_path)
     logger.info(f"图片已生成：{output_path}（宽度：{max_width}px）")
